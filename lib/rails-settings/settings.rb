@@ -50,7 +50,7 @@ module RailsSettings
     #retrieve all settings as a hash (optionally starting with a given namespace)
     def self.all(starting_with=nil)
       options = starting_with ? { :conditions => "var LIKE '#{starting_with}%'"} : {}
-      vars = self.where(:thing_type => nil, :thing_id => nil).select('var, value').merge(options)
+      vars = thing_scoped.find(:all, {:select => 'var, value'}.merge(options))
 
       result = {}
       vars.each do |record|
@@ -94,7 +94,7 @@ module RailsSettings
     end
 
     def self.object(var_name)
-      self.where(:thing_type => nil, :thing_id => nil, :var => var_name.to_s)
+      thing_scoped.find_by_var(var_name.to_s)
     end
 
     #get the value field, YAML decoded
